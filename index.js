@@ -1,6 +1,8 @@
 'use strict';
 
-const uid = Date.now();
+let uid = String(Date.now());
+uid = uid.slice(uid.length - 6, uid.length);
+
 const log = function(msg) {
   console.log(uid + ': ' + msg);
 };
@@ -35,7 +37,9 @@ const shutdown = function() {
   log('Received shutdown signal');
   server.close(() => {
     log('Shutting down.');
-    process.exit(0);
+    setTimeout(() => {
+      process.exit(0);
+    }, 1000);
   });
 };
 
