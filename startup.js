@@ -1,35 +1,43 @@
 'use strict';
 
 const cluster = require('cluster');
-const winston = require('winston');
 
-let active = true;
 
 if(cluster.isMaster) {
+  let isActive = true;
+
   cluster.fork();
   cluster.fork();
 
-  cluster.on('exit', () => {
-    winston.info('worker exited');
-    if(active) {
-      winston.info('forking again...');
+  // Respawn any child processes that die
+  cluster.on('exit', function() {
+    if(isActive) {
+      console.log('process died. restarting...');
       cluster.fork();
-    } else {
-      const workersRemaining = Object.keys(cluster.workers).length;
-      if(workersRemaining === 0) {
-        winston.info('Goodbye!');
-        process.exit(0);
-      }
     }
   });
 
-  const shutdown = () => {
-    winston.info('Shutting down...');
-    active = false;
-  };
+  const deactivateMasterProcess = function() {
+  if(isActive) {
+    isActive = false;
 
-  process.on('SIGINT', shutdown);
-  process.on('SIGTERM', shutdown);
+    const checkWorkers = function() {
+      if(Object.keys(cluster.workers).length === 0) {
+        console.log('Workers disconnected, exiting.');
+        process.exit(0);
+      }
+    };
+
+    console.log('Waiting for workers to disconnect...');
+
+    checkWorkers();
+    cluster.on('exit', checkWorkers);
+    cluster.on('disconnect', checkWorkers);
+  }
+};
+
+process.on('SIGINT', deactivateMasterProcess);
+process.on('SIGTERM', deactivateMasterProcess);
 
 } else {
   require('./index.js');
