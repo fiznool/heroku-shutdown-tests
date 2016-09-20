@@ -8,23 +8,27 @@ const log = function(msg) {
 log('Started');
 
 // Start a web server so that heroku is happy
-var http = require('http');
-var server = http.createServer(function(request, response) {
+var app = require('express')();
+app.get('/', function(req, res) {
   log('Accepted Connection');
   setTimeout(() => {
     log('Writing Response');
-    response.writeHead(200, {'Content-Type': 'text/html'});
-    response.write('<!DOCTYPE html>');
-    response.write('<html>');
-    response.write('<head>');
-    response.write('<title>Hello World Page</title>');
-    response.write('</head>');
-    response.write('<body>');
-    response.write('Hello World!');
-    response.write('</body>');
-    response.write('</html>');
-    response.end();
-  }, 20000);
+    res.send([
+      '<!DOCTYPE html>',
+      '<html>',
+      '<head>',
+      '<title>Hello World Page</title>',
+      '</head>',
+      '<body>',
+      'Hello World!',
+      '</body>',
+      '</html>'
+    ].join(''));
+  }, 10000);
+});
+
+const server = app.listen(process.env.PORT || 5000, () => {
+  log('Server is listening');
 });
 
 const shutdown = function() {
@@ -37,6 +41,3 @@ const shutdown = function() {
 
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
-
-server.listen(process.env.PORT || 5000);
-log('Server is listening');
