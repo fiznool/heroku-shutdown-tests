@@ -5,6 +5,7 @@ console.log('Started');
 let active = true;
 
 const shutdown = function() {
+  console.log('Received shutdown signal');
   active = false;
   process.on('TICK', () => {
     console.log('Shutting down.');
