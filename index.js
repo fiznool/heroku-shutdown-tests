@@ -7,12 +7,29 @@ const log = function(msg) {
 
 log('Started');
 
-let active = true;
+// Start a web server so that heroku is happy
+var http = require('http');
+var server = http.createServer(function(request, response) {
+  log('Accepted Connection');
+  setTimeout(() => {
+    log('Writing Response');
+    response.writeHead(200, {'Content-Type': 'text/html'});
+    response.write('<!DOCTYPE html>');
+    response.write('<html>');
+    response.write('<head>');
+    response.write('<title>Hello World Page</title>');
+    response.write('</head>');
+    response.write('<body>');
+    response.write('Hello World!');
+    response.write('</body>');
+    response.write('</html>');
+    response.end();
+  }, 20000);
+});
 
 const shutdown = function() {
   log('Received shutdown signal');
-  active = false;
-  process.on('TICK', () => {
+  server.close(() => {
     log('Shutting down.');
     process.exit(0);
   });
@@ -21,34 +38,5 @@ const shutdown = function() {
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
-const tick = function() {
-  setTimeout(() => {
-    log('tick');
-    process.emit('TICK');
-    if(active) {
-      tick();
-    }
-  }, 5000);
-
-};
-
-tick();
-
-// Start a web server so that heroku is happy
-var http = require('http');
-var server = http.createServer(function(request, response) {
-  response.writeHead(200, {'Content-Type': 'text/html'});
-  response.write('<!DOCTYPE html>');
-  response.write('<html>');
-  response.write('<head>');
-  response.write('<title>Hello World Page</title>');
-  response.write('</head>');
-  response.write('<body>');
-  response.write('Hello World!');
-  response.write('</body>');
-  response.write('</html>');
-  response.end();
-});
-
-server.listen(process.env.PORT || 8080);
-console.log('Server is listening');
+server.listen(process.env.PORT || 5000);
+log('Server is listening');
