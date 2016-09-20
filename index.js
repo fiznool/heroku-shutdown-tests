@@ -1,5 +1,8 @@
 'use strict';
 
+// Ensure app stays alive
+process.stdin.resume();
+
 console.log('Started');
 
 const shutdown = function() {
