@@ -1,1 +1,1 @@
-web: node startup.js
+web: bash startup.sh
