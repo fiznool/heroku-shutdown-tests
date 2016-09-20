@@ -1,6 +1,8 @@
 'use strict';
 
 const cluster = require('cluster');
+const winston = require('winston');
+
 let active = true;
 
 if(cluster.isMaster) {
@@ -8,21 +10,21 @@ if(cluster.isMaster) {
   cluster.fork();
 
   cluster.on('exit', () => {
-    console.log('worker exited');
+    winston.info('worker exited');
     if(active) {
-      console.log('forking again...');
+      winston.info('forking again...');
       cluster.fork();
     } else {
       const workersRemaining = Object.keys(cluster.workers).length;
       if(workersRemaining === 0) {
-        console.log('Goodbye!');
+        winston.info('Goodbye!');
         process.exit(0);
       }
     }
   });
 
   const shutdown = () => {
-    console.log('Shutting down...');
+    winston.info('Shutting down...');
     active = false;
   };
 

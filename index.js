@@ -1,10 +1,12 @@
 'use strict';
 
+const winston = require('winston');
+
 let uid = String(Date.now());
 uid = uid.slice(uid.length - 6, uid.length);
 
 const log = function(msg) {
-  console.log(uid + ': ' + msg);
+  winston.info(uid + ': ' + msg);
 };
 
 log('Started');
