@@ -30,4 +30,4 @@ fi
 
 echo "Starting app:"
 echo "> node $node_args"
-node $node_args
+exec node $node_args
