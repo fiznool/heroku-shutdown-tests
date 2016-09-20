@@ -40,5 +40,5 @@ process.on('SIGINT', deactivateMasterProcess);
 process.on('SIGTERM', deactivateMasterProcess);
 
 } else {
-  require('./index.js');
+  require('./index.js')();
 }
