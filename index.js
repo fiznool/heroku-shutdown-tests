@@ -1,14 +1,19 @@
 'use strict';
 
-console.log('Started');
+const uid = Date.now();
+const log = function(msg) {
+  console.log(uid + ': ' + msg);
+};
+
+log('Started');
 
 let active = true;
 
 const shutdown = function() {
-  console.log('Received shutdown signal');
+  log('Received shutdown signal');
   active = false;
   process.on('TICK', () => {
-    console.log('Shutting down.');
+    log('Shutting down.');
     process.exit(0);
   });
 };
@@ -18,7 +23,7 @@ process.on('SIGTERM', shutdown);
 
 const tick = function() {
   setTimeout(() => {
-    console.log('tick');
+    log('tick');
     process.emit('TICK');
     if(active) {
       tick();
