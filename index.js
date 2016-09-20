@@ -5,9 +5,11 @@ console.log('Started');
 let active = true;
 
 const shutdown = function() {
-  console.log('Shutting down.');
   active = false;
-  process.on('TICK', () => process.exit(0));
+  process.on('TICK', () => {
+    console.log('Shutting down.');
+    process.exit(0);
+  });
 };
 
 process.on('SIGINT', shutdown);
@@ -20,7 +22,7 @@ const tick = function() {
     if(active) {
       tick();
     }
-  }, 1000);
+  }, 5000);
 
 };
 
